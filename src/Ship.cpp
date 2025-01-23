@@ -8,14 +8,14 @@ Ship::Ship(Game* game)
 	,mDownSpeed(0.0f)
 {
 	// Create an animated sprite component
-	AnimSpriteComponent* asc = new AnimSpriteComponent(this);
+	auto* asc = new AnimSpriteComponent(this);
 	std::vector<SDL_Texture*> anims = {
 		game->GetTexture(RESOURCES_PATH"Assets/Ship01.png"),
 		game->GetTexture(RESOURCES_PATH"Assets/Ship02.png"),
 		game->GetTexture(RESOURCES_PATH"Assets/Ship03.png"),
 		game->GetTexture(RESOURCES_PATH"Assets/Ship04.png"),
 	};
-	asc->SetAnimTextures(anims);
+	asc->SetAnimTextures(anims, AnimType::LOOPING);
 }
 
 void Ship::UpdateActor(float deltaTime)
@@ -45,7 +45,7 @@ void Ship::UpdateActor(float deltaTime)
 	SetPosition(pos);
 }
 
-void Ship::ProcessKeyboard(const uint8_t* state)
+void Ship::ProcessKeyboard(const Uint8* state)
 {
 	mRightSpeed = 0.0f;
 	mDownSpeed = 0.0f;

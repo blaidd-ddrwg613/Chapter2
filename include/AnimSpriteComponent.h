@@ -1,6 +1,13 @@
 #pragma once
 #include "SpriteComponent.h"
 #include <vector>
+
+enum AnimType
+{
+    LOOPING,
+    SINGLE,
+};
+
 class AnimSpriteComponent : public SpriteComponent
 {
 public:
@@ -8,7 +15,7 @@ public:
 	// Update animation every frame (overridden from component)
 	void Update(float deltaTime) override;
 	// Set the textures used for animation
-	void SetAnimTextures(const std::vector<SDL_Texture*>& textures);
+	void SetAnimTextures(const std::vector<SDL_Texture*>& textures, AnimType type);
 	// Set/get the animation FPS
 	float GetAnimFPS() const { return mAnimFPS; }
 	void SetAnimFPS(float fps) { mAnimFPS = fps; }
@@ -19,4 +26,5 @@ private:
 	float mCurrFrame;
 	// Animation frame rate
 	float mAnimFPS;
+    AnimType animType = AnimType::LOOPING;
 };

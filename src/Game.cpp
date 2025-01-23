@@ -4,6 +4,7 @@
 #include "SpriteComponent.h"
 #include "Ship.h"
 #include "BGSpriteComponent.h"
+#include "Player.h"
 
 #define SDL_STBIMAGE_IMPLEMENTATION
 #include "SDL_stbimage.h"
@@ -19,7 +20,7 @@ Game::Game()
 
 bool Game::Initialize()
 {
-    SDL_Log("Init Started");
+//    SDL_Log("Init Started");
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0)
 	{
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -66,7 +67,7 @@ void Game::RunLoop()
 
 void Game::ProcessInput()
 {
-    SDL_Log("Processing Input");
+//    SDL_Log("Processing Input");
 
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
@@ -86,14 +87,15 @@ void Game::ProcessInput()
 	}
 
 	// Process ship input
-	mShip->ProcessKeyboard(state);
+//	mShip->ProcessKeyboard(state);
+	player->ProcessKeyboard(state);
 
-    SDL_Log("Input Processed");
+//    SDL_Log("Input Processed");
 }
 
 void Game::UpdateGame()
 {
-    SDL_Log("Updating Game");
+//    SDL_Log("Updating Game");
 
 	// Compute delta time
 	// Wait until 16ms has elapsed since last frame
@@ -138,12 +140,12 @@ void Game::UpdateGame()
 		delete actor;
 	}
 
-    SDL_Log("Update Finished");
+//    SDL_Log("Update Finished");
 }
 
 void Game::GenerateOutput()
 {
-    SDL_Log("Generating Output");
+//    SDL_Log("Generating Output");
 
 	SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255);
 	SDL_RenderClear(mRenderer);
@@ -156,17 +158,21 @@ void Game::GenerateOutput()
 
 	SDL_RenderPresent(mRenderer);
 
-    SDL_Log("Output Generated");
+//    SDL_Log("Output Generated");
 }
 
 void Game::LoadData()
 {
-    SDL_Log("Loading Data");
+//    SDL_Log("Loading Data");
 
 	// Create player's ship
-	mShip = new Ship(this);
-	mShip->SetPosition(Vector2(100.0f, 384.0f));
-	mShip->SetScale(1.5f);
+//	mShip = new Ship(this);
+//	mShip->SetPosition(Vector2(100.0f, 384.0f));
+//	mShip->SetScale(1.5f);
+
+    player =  new Player(this);
+    player->SetPosition(Vector2(100.0f, 384.0f));
+    player->SetScale(1.5f);
 
 	// Create actor for the background (this doesn't need a subclass)
 	Actor* temp = new Actor(this);
@@ -190,12 +196,12 @@ void Game::LoadData()
 	bg->SetBGTextures(bgtexs);
 	bg->SetScrollSpeed(-200.0f);
 
-    SDL_Log("Data Loaded");
+//    SDL_Log("Data Loaded");
 }
 
 void Game::UnloadData()
 {
-    SDL_Log("Unloading Data");
+//    SDL_Log("Unloading Data");
 	// Delete actors
 	// Because ~Actor calls RemoveActor, have to use a different style loop
 	while (!mActors.empty())
@@ -210,12 +216,12 @@ void Game::UnloadData()
 	}
 	mTextures.clear();
 
-    SDL_Log("Data Unloaded");
+//    SDL_Log("Data Unloaded");
 }
 
 SDL_Texture* Game::GetTexture(const std::string& fileName)
 {
-    SDL_Log("Getting Texture: %s", fileName.c_str());
+//    SDL_Log("Getting Texture: %s", fileName.c_str());
 
 	SDL_Texture* tex = nullptr;
 	// Is the texture already in the map?
@@ -246,7 +252,7 @@ SDL_Texture* Game::GetTexture(const std::string& fileName)
 		mTextures.emplace(fileName.c_str(), tex);
 	}
 
-    SDL_Log("%s Texture created", fileName.c_str());
+//    SDL_Log("%s Texture created", fileName.c_str());
 	return tex;
 }
 
@@ -260,7 +266,8 @@ void Game::Shutdown()
 
 void Game::AddActor(Actor* actor)
 {
-    SDL_Log("Adding actor: %s", actor);
+//    SDL_Log("Adding actor: %s", actor);
+
 	// If we're updating actors, need to add to pending
 	if (mUpdatingActors)
 	{
@@ -270,12 +277,14 @@ void Game::AddActor(Actor* actor)
 	{
 		mActors.emplace_back(actor);
 	}
-    SDL_Log("Actor added");
+
+//    SDL_Log("Actor added");
 }
 
 void Game::RemoveActor(Actor* actor)
 {
-    SDL_Log("Removing actor: %s", actor);
+//    SDL_Log("Removing actor: %s", actor);
+
 	// Is it in pending actors?
 	auto iter = std::find(mPendingActors.begin(), mPendingActors.end(), actor);
 	if (iter != mPendingActors.end())
@@ -293,12 +302,13 @@ void Game::RemoveActor(Actor* actor)
 		std::iter_swap(iter, mActors.end() - 1);
 		mActors.pop_back();
 	}
-    SDL_Log("Actor removed");
+
+//    SDL_Log("Actor removed");
 }
 
 void Game::AddSprite(SpriteComponent* sprite)
 {
-    SDL_Log("Adding sprite: %s", sprite);
+//    SDL_Log("Adding sprite: %s", sprite);
 
 	// Find the insertion point in the sorted vector
 	// (The first element with a higher draw order than me)
@@ -317,16 +327,16 @@ void Game::AddSprite(SpriteComponent* sprite)
 	// Inserts element before position of iterator
 	mSprites.insert(iter, sprite);
 
-    SDL_Log("Sprite Added");
+//    SDL_Log("Sprite Added");
 }
 
 void Game::RemoveSprite(SpriteComponent* sprite)
 {
-    SDL_Log("Removing Sprite: %s", sprite);
+//    SDL_Log("Removing Sprite: %s", sprite);
 
 	// (We can't swap because it ruins ordering)
 	auto iter = std::find(mSprites.begin(), mSprites.end(), sprite);
 	mSprites.erase(iter);
 
-    SDL_Log("Sprite Removed");
+//    SDL_Log("Sprite Removed");
 }
